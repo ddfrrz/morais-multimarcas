@@ -73,3 +73,28 @@
 .review-toast[hidden]{display:none}.review-toast{position:fixed;right:24px;bottom:25px;width:min(350px,calc(100vw - 32px));z-index:30;padding:23px 24px 20px;background:#f4f4f2;color:#171419;border-left:3px solid #b900a2;box-shadow:0 12px 45px #0008;animation:review-toast-in .45s ease both}.review-toast-close{position:absolute;right:9px;top:7px;border:0;background:none;color:#171419;font-size:26px;cursor:pointer;min-width:40px;min-height:40px}.review-toast-label{font-size:11px;letter-spacing:.09em;color:#6a3462}.review-toast-quote{font-size:16px;line-height:1.5;margin:16px 0 12px}.review-toast-author{font-size:13px;text-decoration:underline;text-underline-offset:3px}@keyframes review-toast-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @media(max-width:700px){.reviews{padding:74px 22px 85px}.reviews-heading{display:block;margin-bottom:35px}.reviews-heading h2{font-size:clamp(43px,11vw,62px)}.reviews-heading>p{margin-top:18px;font-size:16px}.reviews-layout{display:block;padding-top:26px}.reviews-intro{gap:8px;margin-bottom:30px}.reviews-intro p{max-width:none;font-size:14px}.reviews-progress{display:none}.reviews-stage{min-height:410px}.review-card blockquote{font-size:clamp(29px,8vw,41px)}.review-credit{align-items:start;flex-direction:column;gap:7px}.review-toast{bottom:82px;right:16px}}
 @media(prefers-reduced-motion:reduce){.review-card,.review-toast{animation:none;transition:none;transform:none}}
+
+/* Soft wave gradient inspired by the supplied shader, kept behind the content. */
+.essence-copy,.reviews,.closing,footer{
+  background-color:#0b0b0d;
+  background-image:
+    radial-gradient(ellipse 85% 38% at 88% 88%,rgba(54,132,166,.15),transparent 76%),
+    radial-gradient(ellipse 72% 45% at 8% 18%,rgba(116,35,111,.14),transparent 75%),
+    linear-gradient(155deg,#0b0b0d 7%,#121119 48%,#0b0b0d 94%);
+  background-size:125% 125%,130% 130%,100% 100%;
+  animation:morais-wave 24s ease-in-out infinite alternate;
+}
+.reviews{border-top:1px solid #ffffff1d;border-bottom:1px solid #ffffff1d}
+.hero-shade{
+  background:
+    radial-gradient(ellipse 85% 65% at 95% 100%,rgba(54,132,166,.10),transparent 70%),
+    linear-gradient(90deg,rgba(5,5,8,.7),rgba(5,5,8,.12) 60%,transparent),
+    linear-gradient(0deg,rgba(5,5,8,.8),transparent 25%);
+}
+@keyframes morais-wave{
+  from{background-position:0% 20%,100% 80%,center}
+  to{background-position:100% 75%,0% 15%,center}
+}
+@media(prefers-reduced-motion:reduce){
+  .essence-copy,.reviews,.closing,footer{animation:none}
+}
