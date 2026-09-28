@@ -61,6 +61,75 @@
 })();
 
 (() => {
+  const carousel = document.querySelector('.reviews-carousel');
+  if (!carousel) return;
+  const cards = [...carousel.querySelectorAll('.review-card')];
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const progress = document.querySelector('.reviews-progress');
+  const status = carousel.querySelector('.reviews-status');
+  const pauseButton = carousel.querySelector('.review-pause');
+  let current = 0, timer, visible = false, paused = reducedMotion.matches, hovered = false;
+
+  function schedule() {
+    clearTimeout(timer);
+    if (visible && !paused && !hovered && !document.hidden && !carousel.contains(document.activeElement)) {
+      timer = setTimeout(() => show(current + 1), 6500);
+    }
+  }
+  function show(index, manual = false) {
+    current = (index + cards.length) % cards.length;
+    cards.forEach((card, i) => {
+      card.classList.toggle('active', i === current);
+      card.setAttribute('aria-hidden', String(i !== current));
+      card.querySelector('a').tabIndex = i === current ? 0 : -1;
+    });
+    progress.textContent = `0${current + 1} / 08`;
+    if (manual) status.textContent = `Avaliação ${current + 1} de ${cards.length}`;
+    schedule();
+  }
+  carousel.querySelector('.review-prev').addEventListener('click', () => show(current - 1, true));
+  carousel.querySelector('.review-next').addEventListener('click', () => show(current + 1, true));
+  pauseButton.addEventListener('click', () => {
+    paused = !paused;
+    pauseButton.textContent = paused ? 'Reproduzir' : 'Pausar';
+    pauseButton.setAttribute('aria-label', paused ? 'Reproduzir avaliações' : 'Pausar avaliações');
+    schedule();
+  });
+  carousel.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { hovered = true; schedule(); } });
+  carousel.addEventListener('pointerleave', () => { hovered = false; schedule(); });
+  carousel.addEventListener('focusin', schedule);
+  carousel.addEventListener('focusout', () => setTimeout(schedule, 0));
+  document.addEventListener('visibilitychange', schedule);
+  reducedMotion.addEventListener('change', () => {
+    paused = reducedMotion.matches;
+    pauseButton.textContent = paused ? 'Reproduzir' : 'Pausar';
+    pauseButton.setAttribute('aria-label', paused ? 'Reproduzir avaliações' : 'Pausar avaliações');
+    schedule();
+  });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(entries => { visible = entries[0].isIntersecting; schedule(); }, {threshold:.15}).observe(carousel);
+  } else visible = true;
+  show(0);
+
+  // One discreet notice per page visit, sourced from an actual quoted review.
+  const toast = document.querySelector('.review-toast');
+  const choices = cards.slice(1).filter(card => card.querySelector('blockquote').textContent.length < 85);
+  const selected = choices[Math.floor(Math.random() * choices.length)];
+  toast.querySelector('.review-toast-quote').textContent = selected.querySelector('blockquote').textContent;
+  const author = toast.querySelector('.review-toast-author');
+  author.textContent = selected.querySelector('.review-credit a').textContent.trim() + ' · Ver avaliação';
+  author.href = selected.querySelector('.review-credit a').href;
+  let toastTimeout;
+  const dismiss = () => { toast.hidden = true; clearTimeout(toastTimeout); };
+  toast.querySelector('.review-toast-close').addEventListener('click', dismiss);
+  setTimeout(() => {
+    if (document.hidden) return;
+    toast.hidden = false;
+    toastTimeout = setTimeout(dismiss, 8000);
+  }, 24000);
+})();
+
+(() => {
   const carousel = document.querySelector('.brand-carousel');
   if (!carousel) return;
   const slides = [...carousel.querySelectorAll('.brand-slide')];
