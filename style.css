@@ -98,3 +98,35 @@
 @media(prefers-reduced-motion:reduce){
   .essence-copy,.reviews,.closing,footer{animation:none}
 }
+
+/* Scroll reveal: logo and soft waves give way to the existing hero. */
+.opening{position:relative}
+.opening-overlay{display:none}
+.intro-ready .opening{height:185svh;z-index:25}
+.intro-ready .opening .hero{position:sticky;top:0;height:100svh;min-height:0;max-height:none}
+.intro-ready .opening-overlay{
+  position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;overflow:hidden;pointer-events:none;
+  opacity:var(--opening-opacity,1);
+  background:
+    radial-gradient(ellipse 82% 46% at 76% 78%,rgba(36,112,158,.46),transparent 74%),
+    radial-gradient(ellipse 75% 48% at 18% 22%,rgba(92,29,105,.52),transparent 76%),
+    linear-gradient(150deg,#09090e 5%,#131324 45%,#08090e 100%);
+}
+.opening-overlay::before{
+  content:"";position:absolute;inset:-18%;
+  background:
+    radial-gradient(ellipse 64% 15% at 55% 62%,rgba(85,170,199,.20),transparent 79%),
+    radial-gradient(ellipse 70% 15% at 45% 45%,rgba(168,72,171,.17),transparent 82%);
+  transform:rotate(-13deg);filter:blur(20px);
+  animation:opening-waves 13s ease-in-out infinite alternate;
+}
+.opening-mark{position:relative;display:flex;flex-direction:column;align-items:center;gap:22px;transform:translateY(calc(var(--opening-progress,0) * -55px)) scale(calc(1 - var(--opening-progress,0) * .12))}
+.opening-mark img{width:clamp(112px,13vw,164px);height:auto;max-height:178px;object-fit:contain;filter:drop-shadow(0 16px 40px #0008)}
+.opening-mark>span{font-size:clamp(27px,4vw,48px);line-height:1;letter-spacing:.22em;font-weight:500;text-align:center;text-indent:.22em}
+.opening-mark small{display:block;font-size:clamp(10px,1.3vw,14px);letter-spacing:.55em;margin-top:15px;font-weight:500}
+.opening-cue{position:absolute;bottom:clamp(28px,5vh,55px);left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:12px;font-size:12px;letter-spacing:.22em;color:#d9cedd;opacity:calc(1 - var(--opening-progress,0) * 2)}
+.opening-cue span{font-size:27px;line-height:1;animation:scroll-nudge 2s ease-in-out infinite}
+@keyframes opening-waves{from{transform:translate3d(-4%,2%,0) rotate(-13deg)}to{transform:translate3d(5%,-3%,0) rotate(-9deg)}}
+@media(max-width:700px){.opening-mark{gap:17px}.opening-mark img{width:130px}.opening-mark>span{font-size:30px}.opening-mark small{font-size:10px}.intro-ready .opening{height:175svh}}
+@media(prefers-reduced-motion:reduce){.intro-ready .opening{height:auto}.intro-ready .opening .hero{position:relative;height:min(920px,100svh);min-height:700px}.intro-ready .opening-overlay{display:none}.opening-overlay::before,.opening-cue span{animation:none}}

@@ -189,3 +189,41 @@
   } else { visible = true; }
   syncPause();
 })();
+
+(() => {
+  const opening = document.querySelector('.opening');
+  const hero = opening?.querySelector('.hero');
+  const overlay = opening?.querySelector('.opening-overlay');
+  if (!opening || !hero || !overlay) return;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const header = document.querySelector('.header');
+  const heroContent = [hero.querySelector('.hero-copy'), hero.querySelector('.hero-bottom')];
+  let frame = 0;
+  const clamp = value => Math.min(1, Math.max(0, value));
+
+  function update() {
+    frame = 0;
+    if (reducedMotion.matches) return;
+    const distance = Math.max(1, opening.offsetHeight - hero.offsetHeight);
+    const progress = clamp(-opening.getBoundingClientRect().top / distance);
+    const opacity = 1 - clamp((progress - .04) / .76);
+    overlay.style.setProperty('--opening-progress', progress.toFixed(3));
+    overlay.style.setProperty('--opening-opacity', opacity.toFixed(3));
+    const accessible = progress >= .7;
+    header.inert = !accessible;
+    heroContent.forEach(element => { element.inert = !accessible; });
+  }
+  function schedule() { if (!frame) frame = requestAnimationFrame(update); }
+  function configure() {
+    document.documentElement.classList.toggle('intro-ready', !reducedMotion.matches);
+    if (reducedMotion.matches) {
+      header.inert = false;
+      heroContent.forEach(element => { element.inert = false; });
+      overlay.style.removeProperty('--opening-opacity');
+    } else schedule();
+  }
+  window.addEventListener('scroll', schedule, {passive:true});
+  window.addEventListener('resize', schedule, {passive:true});
+  reducedMotion.addEventListener('change', configure);
+  configure();
+})();
